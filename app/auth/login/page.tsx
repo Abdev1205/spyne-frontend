@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
+import { ToastContainer, toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,6 +17,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
+import { ApiUrl } from "../../../utils/BaseUrl.js";
+import api from "@/utils/axios.js";
+import { useRouter } from "next/navigation.js";
 
 const formSchema = z.object({
   email: z
@@ -32,6 +35,8 @@ const formSchema = z.object({
 });
 
 const LoginPage = () => {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
@@ -41,9 +46,51 @@ const LoginPage = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
-  }
+    try {
+      if (values) {
+        const data = {
+          email: values.email,
+          password: values.password,
+        };
+        const res = await api.post(`/api/auth/login`, data, {
+          withCredentials: true,
+        });
+        console.log(res);
+        toast.success("User Logged in Successful", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        router.push("/dashboard");
+      }
+    } catch (error: any) {
+      toast.error(error, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      window.location.href = `${ApiUrl}/api/auth/google`;
+    } catch (error) {
+      console.error("Error during Google login:", error);
+    }
+  };
 
   return (
     <div className=" w-[100%] min-h-[calc(100vh-4rem)] flex justify-center items-center">
@@ -114,7 +161,10 @@ const LoginPage = () => {
 
         {/* Google Login stuff */}
 
-        <Button className=" bg-gray-50 text-black font-openSans font-[500] w-full hover:bg-gray-200 py-[1.3rem] shadow-none border-[1px] rounded-[.2rem] ">
+        <Button
+          onClick={() => handleGoogleLogin()}
+          className=" bg-gray-50 text-black font-openSans font-[500] w-full hover:bg-gray-200 py-[1.3rem] shadow-none border-[1px] rounded-[.2rem] "
+        >
           <FcGoogle className=" text-[1.2rem] " /> Login with Google
         </Button>
 

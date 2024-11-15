@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
+import { ToastContainer, toast } from "react-toastify";
 import {
   Form,
   FormControl,
@@ -16,6 +17,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
+import api from "@/utils/axios";
+import { useRouter } from "next/navigation";
 
 const formSchema = z
   .object({
@@ -45,6 +48,8 @@ const formSchema = z
   });
 
 const RegisterPage = () => {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
@@ -56,9 +61,55 @@ const RegisterPage = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
-  }
+
+    try {
+      if (values) {
+        // setvalid(true)
+        const data = {
+          name: values.name,
+          email: values.email,
+          password: values.password,
+        };
+        const res = await api.post(`/api/auth/register`, data);
+        console.log(res);
+        toast.success(res.data.message, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        router.push("/login");
+      } else {
+        toast.error("fill all required details correctly", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      }
+    } catch (error: any) {
+      toast.error(error, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
+  };
 
   return (
     <div className="w-full min-h-[calc(100vh-4rem)] flex justify-center items-center">
