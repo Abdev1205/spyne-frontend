@@ -20,6 +20,8 @@ import Link from "next/link";
 import { ApiUrl } from "../../../utils/BaseUrl.js";
 import api from "@/utils/axios.js";
 import { useRouter } from "next/navigation.js";
+import { useEffect, useState } from "react";
+import ToggleSwitch from "@/components/custom/Button/ToggleSwitch";
 
 const formSchema = z.object({
   email: z
@@ -36,6 +38,7 @@ const formSchema = z.object({
 
 const LoginPage = () => {
   const router = useRouter();
+  const [demoSwitchOn, setDemoSwitchOn] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,6 +48,20 @@ const LoginPage = () => {
       password: "",
     },
   });
+
+  useEffect(() => {
+    if (demoSwitchOn) {
+      form.reset({
+        email: process.env.NEXT_PUBLIC_DEMO_EMAIL_ID || "",
+        password: process.env.NEXT_PUBLIC_DEMO_PASSWORD || "",
+      });
+    } else {
+      form.reset({
+        email: "",
+        password: "",
+      });
+    }
+  }, [demoSwitchOn]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
@@ -68,7 +85,7 @@ const LoginPage = () => {
           progress: undefined,
           theme: "light",
         });
-        router.push("/dashboard");
+        router.push("/");
       }
     } catch (error: any) {
       toast.error(error, {
@@ -100,6 +117,16 @@ const LoginPage = () => {
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex flex-col gap-4"
           >
+            <ToggleSwitch
+              switchOn={demoSwitchOn}
+              setSwitchOn={setDemoSwitchOn}
+              disabled={false}
+              label={`Use Demo Credentials Mode ${
+                demoSwitchOn ? "On" : "Off"
+              } `}
+              labelStyle={` text-black text-opacity-60 `}
+            />
+            <div className=" mb-[1rem] "></div>
             {/* Email  */}
             <FormField
               control={form.control}

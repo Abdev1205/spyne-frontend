@@ -5,7 +5,6 @@ const nextConfig = {
   },
   experimental: {
     missingSuspenseWithCSRBailout: false,
-    disableWorker: true,
   },
 };
 

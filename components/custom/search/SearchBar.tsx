@@ -15,12 +15,11 @@ const SearchBar = () => {
   // cal the api frequnt 3 min gap sould be there
   // Wich meas here we have to update our router with params after 3 sec
   const handleSearch = () => {
-    // now if our search text have chnages so we also have to add this in my use effect
     setTimeout(() => {
       if (searchText) {
         router.push(`${pathname}/?q=${searchText}`);
       }
-    }, 3000);
+    }, 2000);
   };
 
   useEffect(() => {

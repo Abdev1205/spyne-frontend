@@ -9,9 +9,7 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-interface CustomImageProps extends ImageProps {}
-
-export const CustomImage: React.FC<CustomImageProps> = ({
+export const CustomImage: React.FC<ImageProps> = ({
   src,
   alt,
   width,
