@@ -3,9 +3,9 @@ import type { NextRequest } from 'next/server'
 
 export default function middleware(request: NextRequest){
   // abhi true chod raha hu bad me token wala add karunga 
-  // const accessToken = request.cookies.get('accessToken');
+  const accessToken = request.cookies.get('accessToken');
 
-  const accessToken = true;
+  // const accessToken = true;
 
   if(!accessToken){
     // if token not found, redirect to login page
