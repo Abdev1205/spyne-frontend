@@ -3,6 +3,7 @@ import ConfigProvider from "@/providers/ConfigProvider";
 import "./globals.css";
 // import Navbar from "@/components/custom/common/navbar";
 import { montserrat, openSans, poppins } from "../public/font.js";
+import AuthLayer from "@/layer/AuthLayer";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -21,7 +22,7 @@ export default function RootLayout({
       >
         <ConfigProvider>
           {/* <Navbar /> */}
-          {children}
+          <AuthLayer>{children}</AuthLayer>
         </ConfigProvider>
       </body>
     </html>
